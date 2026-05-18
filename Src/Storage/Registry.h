@@ -109,7 +109,7 @@ public:
     ObjectInfo& objectInfo();
     const ObjectInfo& objectInfo() const;
 
-    // ValveInfo
+    // MaterialsOfComponentParts
     bool loadMaterialsOfComponentParts(const QString& position);
     void saveMaterialsOfComponentParts();
 

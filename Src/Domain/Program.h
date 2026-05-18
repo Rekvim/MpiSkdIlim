@@ -7,40 +7,19 @@
 #include <QMessageBox>
 #include <QTimer>
 
-#include "./Src/Mpi/Mpi.h"
-#include "./Src/Ui/TestSettings/OtherTestSettings.h"
-#include "./Src/Ui/TestSettings/StepTestSettings.h"
+#include "Src/Mpi/Mpi.h"
+#include "Src/Ui/TestSettings/OtherTestSettings.h"
+#include "Src/Ui/TestSettings/StepTestSettings.h"
 
-#include "Registry.h"
-#include "./Src/Telemetry/TelemetryStore.h"
-#include "./Src/Runners/AbstractTestRunner.h"
+#include "Src/Storage/Registry.h"
+#include "Src/Storage/Telemetry.h"
+#include "Src/Runners/AbstractTestRunner.h"
 
-#include "./Src/Tests/StepTest.h"
-#include "./Src/Tests/MainTest.h"
-
-#include "./Src/Ui/Setup/SelectTests.h"
-
-struct RealtimeState
-{
-    qint64 timestampMs = 0;
-    qint64 elapsedFromInitMs = 0;
-
-    quint8 sensorCount = 0;
-
-    QVector<QString> sensorText;
-    QVector<qreal> sensorPercent;
-
-    qreal dacValue = 0.0;
-    QString dacText;
-
-    quint8 diMask = 0;
-    quint8 doMask = 0;
-};
-
-Q_DECLARE_METATYPE(RealtimeState)
+#include "Src/Domain/Tests/StepTest.h"
+#include "Src/Domain/Tests/MainTest.h"
+#include "Src/Ui/Setup/SelectTests.h"
 
 enum class TextObjects {
-
     LineEdit_linearSensor,
     LineEdit_linearSensorPercent,
     LineEdit_pressureSensor_1,
@@ -93,7 +72,7 @@ public:
     const Registry* registry() const { return m_registry; }
 
 signals:
-    void realtimeUpdated(const RealtimeState& s);
+    void driveBalancerUpdated(double value, double percent);
     void telemetryUpdated(const TelemetryStore &store);
 
     void programStateChanged(const ProgramStateInfo& info);

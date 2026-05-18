@@ -18,6 +18,7 @@ include(./QXlsx.pri)
 INCLUDEPATH += $$PWD/Src/CustomChart
 
 SOURCES += \
+    Src/ReportBuilders/ReportBlocks/ResolutionBlock.cpp \
     Src/ReportBuilders/ReportBlocks/TechnicalResultsBlock.cpp \
     main.cpp \
     Src/Ui/Setup/ObjectWindow.cpp \
@@ -41,25 +42,25 @@ SOURCES += \
     Src/Runners/RunnerFactory.cpp \
     Src/Runners/StepTestRunner.cpp \
     Src/Runners/StrokeTestRunner.cpp \
-    Src/Telemetry/TelemetryStore.cpp \
-    Src/Tests/MainTest.cpp \
-    Src/Tests/OptionTest.cpp \
-    Src/Tests/StepTest.cpp \
-    Src/Tests/StrokeTest.cpp \
-    Src/Tests/Test.cpp \
+    Src/Domain/Tests/MainTest.cpp \
+    Src/Domain/Tests/OptionTest.cpp \
+    Src/Domain/Tests/StepTest.cpp \
+    Src/Domain/Tests/StrokeTest.cpp \
+    Src/Domain/Tests/Test.cpp \
     Src/Uart/Uart.cpp \
     Src/Uart/UartMessage.cpp \
     Src/Uart/UartReader.cpp \
     Src/ValidatorFactory/ValidatorFactory.cpp \
-    Program.cpp \
-    Registry.cpp \
-    Sensor.cpp
+    Src/Domain/Program.cpp \
+    Src/Storage/Registry.cpp \
+    Src/Domain/Sensor.cpp
 
 HEADERS += \
     Src/ReportBuilders/ReportBlocks/IReportBlock.h \
     Src/ReportBuilders/ReportBlocks/MaterialsBlock.h \
     Src/ReportBuilders/ReportBlocks/ObjectInfoBlock.h \
-    Src/ReportBuilders/ReportBlocks/ResponseResolutionBlock.h \
+    Src/ReportBuilders/ReportBlocks/ResolutionBlock.h \
+    Src/ReportBuilders/ReportBlocks/ResponseBlock.h \
     Src/ReportBuilders/ReportBlocks/StepReactionBlock.h \
     Src/ReportBuilders/ReportBlocks/TechnicalResultsBlock.h \
     Src/ReportBuilders/ReportBlocks/ValveSpecBlock.h \
@@ -72,9 +73,9 @@ HEADERS += \
     Src/Ui/TestSettings/StepTestSettings.h \
     Src/Ui/TestSettings/MainTestSettings.h \
     Src/Ui/MainWindow/MainWindow.h \
-    Program.h \
-    Registry.h \
-    Sensor.h \
+    Src/Domain/Program.h \
+    Src/Storage/Registry.h \
+    Src/Domain/Sensor.h \
     Src/CustomChart/MyChart.h \
     Src/CustomChart/MySeries.h \
     Src/LabeledSlider/LabeledSlider.h \
@@ -90,12 +91,12 @@ HEADERS += \
     Src/Runners/RunnerFactory.h \
     Src/Runners/StepTestRunner.h \
     Src/Runners/StrokeTestRunner.h \
-    Src/Telemetry/TelemetryStore.h \
-    Src/Tests/MainTest.h \
-    Src/Tests/OptionTest.h \
-    Src/Tests/StepTest.h \
-    Src/Tests/StrokeTest.h \
-    Src/Tests/Test.h \
+    Src/Storage/Telemetry.h \
+    Src/Domain/Tests/MainTest.h \
+    Src/Domain/Tests/OptionTest.h \
+    Src/Domain/Tests/StepTest.h \
+    Src/Domain/Tests/StrokeTest.h \
+    Src/Domain/Tests/Test.h \
     Src/Uart/Uart.h \
     Src/Uart/UartMessage.h \
     Src/Uart/UartReader.h \
@@ -110,7 +111,6 @@ FORMS += \
     Src/Ui/TestSettings/MainTestSettings.ui \
     Src/Ui/TestSettings/OtherTestSettings.ui \
     Src/Ui/TestSettings/StepTestSettings.ui
-
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>884</width>
-    <height>786</height>
+    <height>844</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -29,14 +29,14 @@
     <widget class="QTabWidget" name="tabWidget">
      <property name="font">
       <font>
-       <pointsize>9</pointsize>
+       <pointsize>11</pointsize>
       </font>
      </property>
      <property name="focusPolicy">
-      <enum>Qt::FocusPolicy::NoFocus</enum>
+      <enum>Qt::FocusPolicy::StrongFocus</enum>
      </property>
      <property name="currentIndex">
-      <number>0</number>
+      <number>4</number>
      </property>
      <widget class="QWidget" name="tab_data">
       <property name="sizePolicy">
@@ -44,6 +44,9 @@
         <horstretch>0</horstretch>
         <verstretch>0</verstretch>
        </sizepolicy>
+      </property>
+      <property name="focusPolicy">
+       <enum>Qt::FocusPolicy::StrongFocus</enum>
       </property>
       <attribute name="title">
        <string>Данные о ЗРА</string>
@@ -53,13 +56,13 @@
         <number>4</number>
        </property>
        <property name="leftMargin">
-        <number>6</number>
+        <number>10</number>
        </property>
        <property name="topMargin">
-        <number>6</number>
+        <number>10</number>
        </property>
        <property name="rightMargin">
-        <number>6</number>
+        <number>10</number>
        </property>
        <property name="bottomMargin">
         <number>6</number>
@@ -138,6 +141,9 @@
               <pointsize>9</pointsize>
              </font>
             </property>
+            <property name="styleSheet">
+             <string notr="true">padding: 5px 5px;</string>
+            </property>
             <item>
              <property name="text">
               <string>Ручной ввод</string>
@@ -164,6 +170,9 @@
               <family>Segoe UI</family>
               <pointsize>9</pointsize>
              </font>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">padding: 5px 5px;</string>
             </property>
            </widget>
           </item>
@@ -232,9 +241,32 @@
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
+            <property name="styleSheet">
+             <string notr="true">padding: 5px 5px;</string>
+            </property>
             <item>
              <property name="text">
               <string>Masoneilan</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Энергомаш (ВН)</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Спалв-Привод</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Vetec</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>ValvItalia</string>
              </property>
             </item>
             <item>
@@ -293,6 +325,9 @@
               <family>Segoe UI</family>
               <pointsize>9</pointsize>
              </font>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">padding: 5px 5px;</string>
             </property>
            </widget>
           </item>
@@ -379,6 +414,9 @@
               <pointsize>9</pointsize>
              </font>
             </property>
+            <property name="styleSheet">
+             <string notr="true">padding: 5px 5px;</string>
+            </property>
            </widget>
           </item>
          </layout>
@@ -463,6 +501,9 @@
               <family>Segoe UI</family>
               <pointsize>9</pointsize>
              </font>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">padding: 5px 5px;</string>
             </property>
            </widget>
           </item>
@@ -549,6 +590,9 @@
               <pointsize>9</pointsize>
              </font>
             </property>
+            <property name="styleSheet">
+             <string notr="true">padding: 5px 5px;</string>
+            </property>
            </widget>
           </item>
          </layout>
@@ -633,6 +677,9 @@
               <family>Segoe UI</family>
               <pointsize>9</pointsize>
              </font>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">padding: 5px 5px;</string>
             </property>
            </widget>
           </item>
@@ -719,6 +766,9 @@
               <pointsize>9</pointsize>
              </font>
             </property>
+            <property name="styleSheet">
+             <string notr="true">padding: 5px 5px;</string>
+            </property>
            </widget>
           </item>
          </layout>
@@ -798,6 +848,9 @@
               <pointsize>9</pointsize>
              </font>
             </property>
+            <property name="styleSheet">
+             <string notr="true">padding: 5px 5px;</string>
+            </property>
             <item>
              <property name="text">
               <string>Интеллектуальный ЭПП</string>
@@ -833,6 +886,9 @@
               <family>Segoe UI</family>
               <pointsize>9</pointsize>
              </font>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">padding: 5px 5px;</string>
             </property>
             <item>
              <property name="text">
@@ -934,6 +990,9 @@
               <pointsize>9</pointsize>
              </font>
             </property>
+            <property name="styleSheet">
+             <string notr="true">padding: 5px 5px;</string>
+            </property>
            </widget>
           </item>
          </layout>
@@ -1018,6 +1077,9 @@
               <family>Segoe UI</family>
               <pointsize>9</pointsize>
              </font>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">padding: 5px 5px;</string>
             </property>
            </widget>
           </item>
@@ -1104,6 +1166,9 @@
               <pointsize>9</pointsize>
              </font>
             </property>
+            <property name="styleSheet">
+             <string notr="true">padding: 5px 5px;</string>
+            </property>
            </widget>
           </item>
          </layout>
@@ -1188,6 +1253,9 @@
               <family>Segoe UI</family>
               <pointsize>9</pointsize>
              </font>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">padding: 5px 5px;</string>
             </property>
             <item>
              <property name="text">
@@ -1284,6 +1352,9 @@
               <pointsize>9</pointsize>
              </font>
             </property>
+            <property name="styleSheet">
+             <string notr="true">padding: 5px 5px;</string>
+            </property>
            </widget>
           </item>
          </layout>
@@ -1369,6 +1440,9 @@
               <pointsize>9</pointsize>
              </font>
             </property>
+            <property name="styleSheet">
+             <string notr="true">padding: 5px 5px;</string>
+            </property>
            </widget>
           </item>
          </layout>
@@ -1453,6 +1527,9 @@
               <family>Segoe UI</family>
               <pointsize>9</pointsize>
              </font>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">padding: 5px 5px;</string>
             </property>
             <item>
              <property name="text">
@@ -1548,6 +1625,9 @@
               <family>Segoe UI</family>
               <pointsize>9</pointsize>
              </font>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">padding: 5px 5px;</string>
             </property>
             <item>
              <property name="text">
@@ -1649,6 +1729,9 @@
               <pointsize>9</pointsize>
              </font>
             </property>
+            <property name="styleSheet">
+             <string notr="true">padding: 5px 5px;</string>
+            </property>
            </widget>
           </item>
          </layout>
@@ -1727,6 +1810,9 @@
               <family>Segoe UI</family>
               <pointsize>9</pointsize>
              </font>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">padding: 5px 5px;</string>
             </property>
            </widget>
           </item>
@@ -1812,6 +1898,9 @@
               <family>Segoe UI</family>
               <pointsize>9</pointsize>
              </font>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">padding: 5px 5px;</string>
             </property>
             <property name="text">
              <string>0 см</string>
@@ -1903,6 +1992,9 @@
               <family>Segoe UI</family>
               <pointsize>9</pointsize>
              </font>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">padding: 5px 5px;</string>
             </property>
             <item>
              <property name="text">
@@ -2011,6 +2103,9 @@
               <pointsize>9</pointsize>
              </font>
             </property>
+            <property name="styleSheet">
+             <string notr="true">padding: 5px 5px;</string>
+            </property>
             <property name="dragEnabled">
              <bool>false</bool>
             </property>
@@ -2093,6 +2188,9 @@
               <pointsize>9</pointsize>
              </font>
             </property>
+            <property name="styleSheet">
+             <string notr="true">padding: 5px 5px;</string>
+            </property>
             <item>
              <property name="text">
               <string>PTFE</string>
@@ -2111,6 +2209,9 @@
       </layout>
      </widget>
      <widget class="QWidget" name="tab_passFail">
+      <property name="focusPolicy">
+       <enum>Qt::FocusPolicy::StrongFocus</enum>
+      </property>
       <attribute name="title">
        <string>Pass | Fail</string>
       </attribute>
@@ -2173,6 +2274,12 @@
               <pointsize>14</pointsize>
              </font>
             </property>
+            <property name="focusPolicy">
+             <enum>Qt::FocusPolicy::StrongFocus</enum>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">padding: 5px 5px;</string>
+            </property>
             <property name="alignment">
              <set>Qt::AlignmentFlag::AlignCenter</set>
             </property>
@@ -2214,6 +2321,12 @@
              <font>
               <pointsize>14</pointsize>
              </font>
+            </property>
+            <property name="focusPolicy">
+             <enum>Qt::FocusPolicy::StrongFocus</enum>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">padding: 5px 5px;</string>
             </property>
             <property name="alignment">
              <set>Qt::AlignmentFlag::AlignCenter</set>
@@ -2306,6 +2419,12 @@
               <pointsize>14</pointsize>
              </font>
             </property>
+            <property name="focusPolicy">
+             <enum>Qt::FocusPolicy::StrongFocus</enum>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">padding: 5px 5px;</string>
+            </property>
             <property name="alignment">
              <set>Qt::AlignmentFlag::AlignCenter</set>
             </property>
@@ -2384,6 +2503,12 @@
              <font>
               <pointsize>14</pointsize>
              </font>
+            </property>
+            <property name="focusPolicy">
+             <enum>Qt::FocusPolicy::StrongFocus</enum>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">padding: 5px 5px;</string>
             </property>
             <property name="alignment">
              <set>Qt::AlignmentFlag::AlignCenter</set>
@@ -2469,6 +2594,12 @@
               <pointsize>14</pointsize>
              </font>
             </property>
+            <property name="focusPolicy">
+             <enum>Qt::FocusPolicy::StrongFocus</enum>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">padding: 5px 5px;</string>
+            </property>
             <property name="alignment">
              <set>Qt::AlignmentFlag::AlignCenter</set>
             </property>
@@ -2510,6 +2641,12 @@
              <font>
               <pointsize>14</pointsize>
              </font>
+            </property>
+            <property name="focusPolicy">
+             <enum>Qt::FocusPolicy::StrongFocus</enum>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">padding: 5px 5px;</string>
             </property>
             <property name="alignment">
              <set>Qt::AlignmentFlag::AlignCenter</set>
@@ -2603,6 +2740,9 @@
       </layout>
      </widget>
      <widget class="QWidget" name="tab_materials">
+      <property name="focusPolicy">
+       <enum>Qt::FocusPolicy::StrongFocus</enum>
+      </property>
       <property name="layoutDirection">
        <enum>Qt::LayoutDirection::LeftToRight</enum>
       </property>
@@ -2640,6 +2780,9 @@
            <pointsize>14</pointsize>
           </font>
          </property>
+         <property name="focusPolicy">
+          <enum>Qt::FocusPolicy::StrongFocus</enum>
+         </property>
          <property name="styleSheet">
           <string notr="true">padding: 4px;</string>
          </property>
@@ -2671,6 +2814,9 @@
            <family>Segoe UI</family>
            <pointsize>14</pointsize>
           </font>
+         </property>
+         <property name="focusPolicy">
+          <enum>Qt::FocusPolicy::StrongFocus</enum>
          </property>
          <property name="styleSheet">
           <string notr="true">padding: 4px;</string>
@@ -2704,6 +2850,9 @@
            <pointsize>14</pointsize>
           </font>
          </property>
+         <property name="focusPolicy">
+          <enum>Qt::FocusPolicy::StrongFocus</enum>
+         </property>
          <property name="styleSheet">
           <string notr="true">padding: 4px;</string>
          </property>
@@ -2735,6 +2884,9 @@
            <family>Segoe UI</family>
            <pointsize>14</pointsize>
           </font>
+         </property>
+         <property name="focusPolicy">
+          <enum>Qt::FocusPolicy::StrongFocus</enum>
          </property>
          <property name="styleSheet">
           <string notr="true">padding: 4px;</string>
@@ -2768,6 +2920,9 @@
            <pointsize>14</pointsize>
           </font>
          </property>
+         <property name="focusPolicy">
+          <enum>Qt::FocusPolicy::StrongFocus</enum>
+         </property>
          <property name="styleSheet">
           <string notr="true">padding: 4px;</string>
          </property>
@@ -2799,6 +2954,9 @@
            <family>Segoe UI</family>
            <pointsize>14</pointsize>
           </font>
+         </property>
+         <property name="focusPolicy">
+          <enum>Qt::FocusPolicy::StrongFocus</enum>
          </property>
          <property name="styleSheet">
           <string notr="true">padding: 4px;</string>
@@ -2832,6 +2990,9 @@
            <pointsize>14</pointsize>
           </font>
          </property>
+         <property name="focusPolicy">
+          <enum>Qt::FocusPolicy::StrongFocus</enum>
+         </property>
          <property name="styleSheet">
           <string notr="true">padding: 4px;</string>
          </property>
@@ -2863,6 +3024,9 @@
            <family>Segoe UI</family>
            <pointsize>14</pointsize>
           </font>
+         </property>
+         <property name="focusPolicy">
+          <enum>Qt::FocusPolicy::StrongFocus</enum>
          </property>
          <property name="styleSheet">
           <string notr="true">padding: 4px;</string>
@@ -2896,6 +3060,9 @@
            <pointsize>14</pointsize>
           </font>
          </property>
+         <property name="focusPolicy">
+          <enum>Qt::FocusPolicy::StrongFocus</enum>
+         </property>
          <property name="styleSheet">
           <string notr="true">padding: 4px;</string>
          </property>
@@ -2928,6 +3095,9 @@
            <pointsize>14</pointsize>
           </font>
          </property>
+         <property name="focusPolicy">
+          <enum>Qt::FocusPolicy::StrongFocus</enum>
+         </property>
          <property name="styleSheet">
           <string notr="true">padding: 4px;</string>
          </property>
@@ -2935,9 +3105,12 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="tab_2">
+     <widget class="QWidget" name="tab_linearSetting">
+      <property name="focusPolicy">
+       <enum>Qt::FocusPolicy::StrongFocus</enum>
+      </property>
       <attribute name="title">
-       <string>Датчик ленейных перемещений</string>
+       <string>Датчик линейных перемещений</string>
       </attribute>
       <layout class="QHBoxLayout" name="horizontalLayout_7">
        <item>
@@ -2980,7 +3153,7 @@
              <number>20</number>
             </property>
             <item>
-             <widget class="QLabel" name="label_3">
+             <widget class="QLabel" name="label_linear">
               <property name="font">
                <font>
                 <pointsize>14</pointsize>
@@ -3016,13 +3189,16 @@
                 <pointsize>14</pointsize>
                </font>
               </property>
+              <property name="focusPolicy">
+               <enum>Qt::FocusPolicy::StrongFocus</enum>
+              </property>
               <property name="alignment">
                <set>Qt::AlignmentFlag::AlignCenter</set>
               </property>
              </widget>
             </item>
             <item>
-             <widget class="QLabel" name="label_crossingLimits_spring_2">
+             <widget class="QLabel" name="label_linearSpliterMinMax">
               <property name="font">
                <font>
                 <pointsize>14</pointsize>
@@ -3057,6 +3233,9 @@
                <font>
                 <pointsize>14</pointsize>
                </font>
+              </property>
+              <property name="focusPolicy">
+               <enum>Qt::FocusPolicy::StrongFocus</enum>
               </property>
               <property name="alignment">
                <set>Qt::AlignmentFlag::AlignCenter</set>
@@ -3115,12 +3294,20 @@
       </layout>
      </widget>
      <widget class="QWidget" name="tab">
+      <property name="focusPolicy">
+       <enum>Qt::FocusPolicy::StrongFocus</enum>
+      </property>
       <attribute name="title">
        <string>Цветовые контуры графиков</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout">
        <item row="1" column="0">
         <widget class="QLabel" name="label_pressure3">
+         <property name="font">
+          <font>
+           <pointsize>12</pointsize>
+          </font>
+         </property>
          <property name="text">
           <string>Цвет для датчика давления 1</string>
          </property>
@@ -3136,13 +3323,13 @@
          </property>
          <property name="minimumSize">
           <size>
-           <width>60</width>
+           <width>100</width>
            <height>40</height>
           </size>
          </property>
          <property name="maximumSize">
           <size>
-           <width>120</width>
+           <width>150</width>
            <height>40</height>
           </size>
          </property>
@@ -3166,13 +3353,13 @@ Border-radius: 10px;
          </property>
          <property name="minimumSize">
           <size>
-           <width>60</width>
+           <width>100</width>
            <height>40</height>
           </size>
          </property>
          <property name="maximumSize">
           <size>
-           <width>120</width>
+           <width>150</width>
            <height>40</height>
           </size>
          </property>
@@ -3188,6 +3375,11 @@ Border-radius: 10px;
        </item>
        <item row="3" column="0">
         <widget class="QLabel" name="label_pressure1">
+         <property name="font">
+          <font>
+           <pointsize>12</pointsize>
+          </font>
+         </property>
          <property name="text">
           <string>Цвет для датчика давления 3</string>
          </property>
@@ -3195,6 +3387,11 @@ Border-radius: 10px;
        </item>
        <item row="0" column="0">
         <widget class="QLabel" name="label_liner">
+         <property name="font">
+          <font>
+           <pointsize>12</pointsize>
+          </font>
+         </property>
          <property name="text">
           <string>Цвет для датчика ленейных перемещений</string>
          </property>
@@ -3208,6 +3405,14 @@ Border-radius: 10px;
            <verstretch>0</verstretch>
           </sizepolicy>
          </property>
+         <property name="font">
+          <font>
+           <pointsize>12</pointsize>
+          </font>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">padding: 5px 5px;</string>
+         </property>
          <property name="text">
           <string>Выбрать</string>
          </property>
@@ -3218,6 +3423,11 @@ Border-radius: 10px;
        </item>
        <item row="2" column="0">
         <widget class="QLabel" name="label_pressure2">
+         <property name="font">
+          <font>
+           <pointsize>12</pointsize>
+          </font>
+         </property>
          <property name="text">
           <string>Цвет для датчика давления 2</string>
          </property>
@@ -3233,13 +3443,13 @@ Border-radius: 10px;
          </property>
          <property name="minimumSize">
           <size>
-           <width>60</width>
+           <width>100</width>
            <height>40</height>
           </size>
          </property>
          <property name="maximumSize">
           <size>
-           <width>120</width>
+           <width>150</width>
            <height>40</height>
           </size>
          </property>
@@ -3274,6 +3484,14 @@ Border-radius: 10px;
            <verstretch>0</verstretch>
           </sizepolicy>
          </property>
+         <property name="font">
+          <font>
+           <pointsize>12</pointsize>
+          </font>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">padding: 5px 5px;</string>
+         </property>
          <property name="text">
           <string>Выбрать</string>
          </property>
@@ -3289,6 +3507,14 @@ Border-radius: 10px;
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
+         </property>
+         <property name="font">
+          <font>
+           <pointsize>12</pointsize>
+          </font>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">padding: 5px 5px;</string>
          </property>
          <property name="text">
           <string>Выбрать</string>
@@ -3308,13 +3534,13 @@ Border-radius: 10px;
          </property>
          <property name="minimumSize">
           <size>
-           <width>60</width>
+           <width>100</width>
            <height>40</height>
           </size>
          </property>
          <property name="maximumSize">
           <size>
-           <width>120</width>
+           <width>150</width>
            <height>40</height>
           </size>
          </property>
@@ -3336,6 +3562,14 @@ Border-radius: 10px;
            <verstretch>0</verstretch>
           </sizepolicy>
          </property>
+         <property name="font">
+          <font>
+           <pointsize>12</pointsize>
+          </font>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">padding: 5px 5px;</string>
+         </property>
          <property name="text">
           <string>Выбрать</string>
          </property>
@@ -3346,6 +3580,14 @@ Border-radius: 10px;
        </item>
        <item row="4" column="1">
         <widget class="QPushButton" name="pushButton_resetColors">
+         <property name="font">
+          <font>
+           <pointsize>12</pointsize>
+          </font>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">padding: 5px 5px;</string>
+         </property>
          <property name="text">
           <string>Сброс до базовой палитры</string>
          </property>
@@ -3386,11 +3628,20 @@ Border-radius: 10px;
          <verstretch>0</verstretch>
         </sizepolicy>
        </property>
+       <property name="minimumSize">
+        <size>
+         <width>100</width>
+         <height>0</height>
+        </size>
+       </property>
        <property name="font">
         <font>
          <family>Segoe UI</family>
          <pointsize>9</pointsize>
         </font>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">padding: 5px 5px;</string>
        </property>
        <property name="text">
         <string>Очистить</string>
@@ -3405,11 +3656,20 @@ Border-radius: 10px;
          <verstretch>0</verstretch>
         </sizepolicy>
        </property>
+       <property name="minimumSize">
+        <size>
+         <width>100</width>
+         <height>0</height>
+        </size>
+       </property>
        <property name="font">
         <font>
          <family>Segoe UI</family>
          <pointsize>9</pointsize>
         </font>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">padding: 5px 5px;</string>
        </property>
        <property name="text">
         <string>Далее</string>

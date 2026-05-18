@@ -15,9 +15,9 @@
 
 
 #include "./Src/ReportBuilders/ReportSaver.h"
-#include "Program.h"
-#include "Registry.h"
-#include "./Src/Telemetry/TelemetryStore.h"
+#include "Src/Domain/Program.h"
+#include "Src/Storage/Registry.h"
+#include "./Src/Storage/Telemetry.h"
 #include "./Src/Ui/TestSettings/AbstractTestSettings.h"
 
 // QT_BEGIN_NAMESPACE
@@ -211,11 +211,20 @@ private:
     QImage m_imageChartResolution;
     QImage m_imageChartStep;
 
+    QHash<QString, QString> m_testComments;
+    void editTestComment(const QString& testKey, const QString& title, const QString& description);
+    bool hasAnyTestComments() const;
+    void saveCommentsPdfIfNeeded();
+    QString buildCommentsHtml() const;
+    QString commentsPdfPath() const;
+
     void syncTaskChartSeriesVisibility(quint8 sensorCount);
     void displayDependingPattern();
     void triggerPrimaryAction();
     QTabWidget* currentInnerTabWidget() const;
 
+    void updateDriveBalancerUi(double value, double percent);
+    void initSensorLineEditBorders();
     void initCharts();
     void saveChart(Charts chart);
     void getImage(QLabel* label, QImage* image);

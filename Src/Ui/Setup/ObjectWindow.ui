@@ -68,6 +68,9 @@
             <bold>false</bold>
            </font>
           </property>
+          <property name="styleSheet">
+           <string notr="true">padding: 5px 5px;</string>
+          </property>
          </widget>
         </item>
        </layout>
@@ -102,6 +105,9 @@
             <pointsize>11</pointsize>
             <bold>false</bold>
            </font>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">padding: 5px 5px;</string>
           </property>
          </widget>
         </item>
@@ -144,18 +150,21 @@
             <bold>false</bold>
            </font>
           </property>
+          <property name="styleSheet">
+           <string notr="true">padding: 5px 5px;</string>
+          </property>
           <property name="dateTime">
            <datetime>
             <hour>0</hour>
             <minute>0</minute>
             <second>0</second>
-            <year>2000</year>
-            <month>1</month>
-            <day>1</day>
+            <year>1999</year>
+            <month>12</month>
+            <day>31</day>
            </datetime>
           </property>
           <property name="displayFormat">
-           <string>M.d.yyyy</string>
+           <string>MM.dd.yyyy</string>
           </property>
           <property name="calendarPopup">
            <bool>true</bool>
@@ -195,6 +204,9 @@
             <bold>false</bold>
            </font>
           </property>
+          <property name="styleSheet">
+           <string notr="true">padding: 5px 5px;</string>
+          </property>
          </widget>
         </item>
        </layout>
@@ -229,6 +241,9 @@
             <pointsize>11</pointsize>
             <bold>false</bold>
            </font>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">padding: 5px 5px;</string>
           </property>
          </widget>
         </item>
@@ -268,6 +283,9 @@
          <family>Segoe UI</family>
          <pointsize>11</pointsize>
         </font>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">padding: 5px 5px;</string>
        </property>
        <property name="text">
         <string>Далее</string>

@@ -5,8 +5,8 @@
 #include <QEventLoop>
 #include <QThread>
 
-#include "Sensor.h"
-#include "./Src/Uart/UartReader.h"
+#include "Src/Domain/Sensor.h"
+#include "Src/Uart/UartReader.h"
 
 class Mpi : public QObject
 {

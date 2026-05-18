@@ -6,7 +6,8 @@
 #include "Src/ReportBuilders/ReportBlocks/MaterialsBlock.h"
 #include "Src/ReportBuilders/ReportBlocks/StepReactionBlock.h"
 #include "Src/ReportBuilders/ReportBlocks/TechnicalResultsBlock.h"
-#include "Src/ReportBuilders/ReportBlocks/ResponseResolutionBlock.h"
+#include "Src/ReportBuilders/ReportBlocks/ResponseBlock.h"
+#include "Src/ReportBuilders/ReportBlocks/ResolutionBlock.h"
 
 void ReportBuilder::buildReport(
     ReportSaver::Report &report,
@@ -55,8 +56,7 @@ void ReportBuilder::buildReport(
 
     ObjectInfoBlock({m_sheetTechnicalInspection, 5, 4}).build(writer, ctx);
     ValveSpecBlock({m_sheetTechnicalInspection, 5, 13}).build(writer, ctx);
-    MaterialsBlock({m_sheetTechnicalInspection, 11, 4})
-        .build(writer, ctx);
+    MaterialsBlock({m_sheetTechnicalInspection, 11, 4}).build(writer, ctx);
 
     TechnicalResultsBlock({m_sheetTechnicalInspection,
                               28, // rowStart
@@ -89,55 +89,39 @@ void ReportBuilder::buildReport(
     writer.cell(m_sheetResponse, 1, 9, ctx.valve.positionNumber);
     ObjectInfoBlock({m_sheetResponse, 4, 4}).build(writer, ctx);
     ValveSpecBlock({m_sheetResponse, 4, 13}).build(writer, ctx);
-    writer.image(m_sheetResponse,
-                 18,
-                 2,
-                 ctx.chartResponse);
-    ResponseResolutionBlock(
-        {
-            m_sheetResponse,
+    writer.image(m_sheetResponse, 18, 2, ctx.chartResponse);
+    ResponseBlock::Layout responseLayout {
+        .sheet = m_sheetResponse,
+        .upSelectedRow = 55,
+        .upActualRow =56,
+        .upAllowedErrorRow = 57,
+        .upErrorRow =58,
 
-            55, // upSelectedRow
-            56, // upActualRow
-            57, // upErrorRow
-
-            61, // downSelectedRow
-            62, // downActualRow
-            63, // downErrorRow
-
-            // шаги 1..4
-            {5, 6, 10, 12, 14}
-        },
-        ResponseResolutionBlock::Kind::Response
-        ).build(writer, ctx);
-
-    writer.cell(m_sheetResponse, 67, 12, ctx.params.date);
+        .downSelectedRow = 62,
+        .downActualRow = 63,
+        .downAllowedErrorRow = 64,
+        .downErrorRow = 65,
+        .stepCols = {5, 6, 10, 12, 14}
+    };
+    ResponseBlock(responseLayout).build(writer, ctx);
+    writer.cell(m_sheetResponse, 69, 12, ctx.params.date);
 
     writer.cell(m_sheetResolution, 1, 9, ctx.valve.positionNumber);
     ObjectInfoBlock({m_sheetResolution, 4, 4}).build(writer, ctx);
     ValveSpecBlock({m_sheetResolution, 4, 13}).build(writer, ctx);
-    writer.image(m_sheetResolution,
-                 18,
-                 2,
-                 ctx.chartResolution);
-    ResponseResolutionBlock(
-        {
-            m_sheetResolution,
-             // upward
-             55, // upSelectedRow
-             56, // upActualRow
-             57, // upErrorRow
+    writer.image(m_sheetResolution, 18, 2, ctx.chartResolution);
+    ResolutionBlock::Layout resolutionLayout {
+        .sheet = m_sheetResolution,
+        .upSelectedRow = 55,
+        .upActualRow =56,
+        .upErrorRow =57,
 
-             // downward
-             61, // downSelectedRow
-             62, // downActualRow
-             63, // downErrorRow
-
-             // шаги 1..4
-             {5, 6, 10, 12, 14}
-        },
-        ResponseResolutionBlock::Kind::Resolution
-        ).build(writer, ctx);
+        .downSelectedRow = 61,
+        .downActualRow = 62,
+        .downErrorRow = 63,
+        .stepCols = {5, 6, 10, 12, 14}
+    };
+    ResolutionBlock(resolutionLayout).build(writer, ctx);
 
     writer.cell(m_sheetResolution, 67, 12, ctx.params.date);
 

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>254</width>
-    <height>368</height>
+    <width>314</width>
+    <height>454</height>
    </rect>
   </property>
   <property name="font">
@@ -25,7 +25,7 @@
       <widget class="QLabel" name="label">
        <property name="font">
         <font>
-         <pointsize>10</pointsize>
+         <pointsize>12</pointsize>
         </font>
        </property>
        <property name="text">
@@ -37,8 +37,11 @@
       <widget class="QTimeEdit" name="timeEdit">
        <property name="font">
         <font>
-         <pointsize>10</pointsize>
+         <pointsize>12</pointsize>
         </font>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">padding: 5px 5px;</string>
        </property>
        <property name="currentSection">
         <enum>QDateTimeEdit::Section::SecondSection</enum>
@@ -66,7 +69,7 @@
       <widget class="QLabel" name="label_3">
        <property name="font">
         <font>
-         <pointsize>10</pointsize>
+         <pointsize>12</pointsize>
         </font>
        </property>
        <property name="text">
@@ -78,8 +81,11 @@
       <widget class="QSpinBox" name="spinBox_T_value">
        <property name="font">
         <font>
-         <pointsize>10</pointsize>
+         <pointsize>12</pointsize>
         </font>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">padding: 5px 5px;</string>
        </property>
        <property name="minimum">
         <number>0</number>
@@ -96,6 +102,11 @@
    </item>
    <item>
     <widget class="QGroupBox" name="groupBox_2">
+     <property name="font">
+      <font>
+       <pointsize>12</pointsize>
+      </font>
+     </property>
      <property name="title">
       <string>Значения для тестирования</string>
      </property>
@@ -118,8 +129,11 @@
          <widget class="QPushButton" name="pushButton_add_value">
           <property name="font">
            <font>
-            <pointsize>10</pointsize>
+            <pointsize>12</pointsize>
            </font>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">padding: 5px 5px;</string>
           </property>
           <property name="text">
            <string>Добавить</string>
@@ -130,8 +144,11 @@
          <widget class="QPushButton" name="pushButton_delete_value">
           <property name="font">
            <font>
-            <pointsize>10</pointsize>
+            <pointsize>12</pointsize>
            </font>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">padding: 5px 5px;</string>
           </property>
           <property name="text">
            <string>Удалить</string>
@@ -142,8 +159,11 @@
          <widget class="QPushButton" name="pushButton_change_value">
           <property name="font">
            <font>
-            <pointsize>10</pointsize>
+            <pointsize>12</pointsize>
            </font>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">padding: 5px 5px;</string>
           </property>
           <property name="text">
            <string>Изменить</string>
@@ -187,8 +207,11 @@
       <widget class="QPushButton" name="pushButton_2">
        <property name="font">
         <font>
-         <pointsize>10</pointsize>
+         <pointsize>12</pointsize>
         </font>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">padding: 5px 5px;</string>
        </property>
        <property name="text">
         <string>Отмена</string>
@@ -199,8 +222,11 @@
       <widget class="QPushButton" name="pushButton">
        <property name="font">
         <font>
-         <pointsize>10</pointsize>
+         <pointsize>12</pointsize>
         </font>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">padding: 5px 5px;</string>
        </property>
        <property name="text">
         <string>Начать тест</string>

@@ -3,7 +3,7 @@
 
 #pragma once
 #include "BaseRunner.h"
-#include "./Src/Tests/StepTest.h"
+#include "Src/Domain/Tests/StepTest.h"
 #include "./Src/Ui/TestSettings/StepTestSettings.h"
 
 class StepTestRunner : public BaseRunner {

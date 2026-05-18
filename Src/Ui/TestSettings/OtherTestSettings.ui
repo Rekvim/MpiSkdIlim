@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>293</width>
-    <height>459</height>
+    <width>311</width>
+    <height>481</height>
    </rect>
   </property>
   <property name="font">
@@ -23,6 +23,11 @@
     <layout class="QHBoxLayout" name="horizontalLayout_3">
      <item>
       <widget class="QLabel" name="label">
+       <property name="font">
+        <font>
+         <pointsize>12</pointsize>
+        </font>
+       </property>
        <property name="text">
         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:11pt;&quot;&gt;Время удержания&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
        </property>
@@ -32,8 +37,11 @@
       <widget class="QTimeEdit" name="timeEdit">
        <property name="font">
         <font>
-         <pointsize>10</pointsize>
+         <pointsize>12</pointsize>
         </font>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">padding: 5px 5px;</string>
        </property>
        <property name="currentSection">
         <enum>QDateTimeEdit::Section::SecondSection</enum>
@@ -60,7 +68,7 @@
      <property name="font">
       <font>
        <family>Segoe UI</family>
-       <pointsize>10</pointsize>
+       <pointsize>12</pointsize>
       </font>
      </property>
      <property name="title">
@@ -81,8 +89,11 @@
           <property name="font">
            <font>
             <family>Segoe UI</family>
-            <pointsize>10</pointsize>
+            <pointsize>12</pointsize>
            </font>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">padding: 5px 5px;</string>
           </property>
           <property name="text">
            <string>Добавить</string>
@@ -97,8 +108,11 @@
           <property name="font">
            <font>
             <family>Segoe UI</family>
-            <pointsize>10</pointsize>
+            <pointsize>12</pointsize>
            </font>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">padding: 5px 5px;</string>
           </property>
           <property name="text">
            <string>Удалить</string>
@@ -110,8 +124,11 @@
           <property name="font">
            <font>
             <family>Segoe UI</family>
-            <pointsize>10</pointsize>
+            <pointsize>12</pointsize>
            </font>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">padding: 5px 5px;</string>
           </property>
           <property name="text">
            <string>Изменить</string>
@@ -150,6 +167,12 @@
      <layout class="QHBoxLayout" name="horizontalLayout_2">
       <item>
        <widget class="QListWidget" name="listWidget_step">
+        <property name="font">
+         <font>
+          <family>Segoe UI</family>
+          <pointsize>12</pointsize>
+         </font>
+        </property>
         <item>
          <property name="text">
           <string>3.0</string>
@@ -179,8 +202,11 @@
           <property name="font">
            <font>
             <family>Segoe UI</family>
-            <pointsize>10</pointsize>
+            <pointsize>12</pointsize>
            </font>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">padding: 5px 5px;</string>
           </property>
           <property name="text">
            <string>Добавить</string>
@@ -192,8 +218,11 @@
           <property name="font">
            <font>
             <family>Segoe UI</family>
-            <pointsize>10</pointsize>
+            <pointsize>12</pointsize>
            </font>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">padding: 5px 5px;</string>
           </property>
           <property name="text">
            <string>Удалить</string>
@@ -205,8 +234,11 @@
           <property name="font">
            <font>
             <family>Segoe UI</family>
-            <pointsize>10</pointsize>
+            <pointsize>12</pointsize>
            </font>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">padding: 5px 5px;</string>
           </property>
           <property name="text">
            <string>Изменить</string>
@@ -250,8 +282,11 @@
       <widget class="QPushButton" name="pushButton_2">
        <property name="font">
         <font>
-         <pointsize>10</pointsize>
+         <pointsize>12</pointsize>
         </font>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">padding: 5px 5px;</string>
        </property>
        <property name="text">
         <string>Отмена</string>
@@ -262,8 +297,11 @@
       <widget class="QPushButton" name="pushButton">
        <property name="font">
         <font>
-         <pointsize>10</pointsize>
+         <pointsize>12</pointsize>
         </font>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">padding: 5px 5px;</string>
        </property>
        <property name="text">
         <string>Начать тест</string>

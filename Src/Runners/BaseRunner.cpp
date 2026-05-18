@@ -1,7 +1,7 @@
-#include "./Src/Runners/BaseRunner.h"
-#include "./Src/Tests/Test.h"
-#include "./Src/Mpi/Mpi.h"
-#include "./Registry.h"
+#include "Src/Runners/BaseRunner.h"
+#include "Src/Domain/Tests/Test.h"
+#include "Src/Mpi/Mpi.h"
+#include "Src/Storage/Registry.h"
 
 BaseRunner::BaseRunner(Mpi& mpi, Registry& reg, QObject* parent)
     : AbstractTestRunner(parent), m_mpi(mpi), m_reg(reg) {}

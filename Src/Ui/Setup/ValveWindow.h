@@ -10,7 +10,7 @@
 #include <QFile>
 #include <QDebug>
 #include <QMessageBox>
-#include "Registry.h"
+#include "Src/Storage/Registry.h"
 #include "SelectTests.h"
 
 namespace Ui {

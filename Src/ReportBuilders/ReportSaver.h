@@ -23,6 +23,9 @@ public:
         quint16 row = 0;
         quint16 col = 0;
         QString value;
+
+        QColor backgroundColor;
+        bool hasBackgroundColor = false;
     };
 
     struct ValidationData {
@@ -39,6 +42,7 @@ public:
 
     explicit ReportSaver(QObject *parent = nullptr);
 
+    bool ensureDirectory();
     void setRegistry(Registry *registry);
     void saveImage(MyChart *chart);
 

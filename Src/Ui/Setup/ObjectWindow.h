@@ -5,7 +5,7 @@
 #include <QDialog>
 #include <QMessageBox>
 #include <QScreen>
-#include "Registry.h"
+#include "Src/Storage/Registry.h"
 
 namespace Ui {
 class ObjectWindow;

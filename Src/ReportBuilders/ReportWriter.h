@@ -30,6 +30,23 @@ public:
         m_report.validation.push_back({sheet, formula, range});
     }
 
+    void coloredCell(const QString& sheet,
+                     quint16 row,
+                     quint16 col,
+                     const QVariant& value,
+                     const QColor& backgroundColor)
+    {
+        ReportSaver::ReportData data;
+        data.sheet = sheet;
+        data.row = row;
+        data.col = col;
+        data.value = value.toString();
+        data.backgroundColor = backgroundColor;
+        data.hasBackgroundColor = true;
+
+        m_report.data.push_back(data);
+    }
+
 private:
     ReportSaver::Report& m_report;
 };

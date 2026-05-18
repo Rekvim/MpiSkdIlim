@@ -5,7 +5,7 @@
 #include <QDialog>
 #include "qdatetime.h"
 #include "AbstractTestSettings.h"
-#include "Registry.h"
+#include "Src/Storage/Registry.h"
 
 namespace Ui {
 class StepTestSettings;

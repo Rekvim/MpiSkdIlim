@@ -1,7 +1,7 @@
 #include "ReportSaver.h"
 
-#include "./Src/CustomChart/MyChart.h"
-#include "Registry.h"
+#include "Src/CustomChart/MyChart.h"
+#include "Src/Storage/Registry.h"
 
 #include <QCoreApplication>
 #include <QDate>
@@ -78,7 +78,6 @@ bool ReportSaver::saveReport(const Report &report, const QString &templatePath)
         createDir();
 
     Document xlsx(templatePath);
-
     for (const auto &item : report.data) {
         if (!xlsx.selectSheet(item.sheet)) {
             qWarning() << "Не найден лист" << item.sheet << "для записи данных!";
@@ -90,7 +89,15 @@ bool ReportSaver::saveReport(const Report &report, const QString &templatePath)
             continue;
         }
 
-        xlsx.write(item.row, item.col, item.value);
+        if (item.hasBackgroundColor) {
+            Format format = xlsx.cellAt(item.row, item.col)->format();
+
+            format.setPatternBackgroundColor(item.backgroundColor);
+
+            xlsx.write(item.row, item.col, item.value, format);
+        } else {
+            xlsx.write(item.row, item.col, item.value);
+        }
     }
 
     constexpr int targetWidth = 885;
@@ -209,4 +216,13 @@ void ReportSaver::createDir()
         m_dir = chosenDir;
         m_isDirectoryCreated = true;
     }
+}
+
+bool ReportSaver::ensureDirectory()
+{
+    if (!m_isDirectoryCreated) {
+        createDir();
+    }
+
+    return m_isDirectoryCreated;
 }

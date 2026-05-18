@@ -1,8 +1,8 @@
-#include "Program.h"
+#include "Src/Domain/Program.h"
 
-#include "./Src/Tests/StepTest.h"
-#include "./Src/Tests/StrokeTest.h"
-#include "./Src/Tests/MainTest.h"
+#include "Src/Domain/Tests/StepTest.h"
+#include "Src/Domain/Tests/StrokeTest.h"
+#include "Src/Domain/Tests/MainTest.h"
 #include "./Src/Runners/MainTestRunner.h"
 #include "./Src/Runners/StepTestRunner.h"
 #include "./Src/Runners/StrokeTestRunner.h"
@@ -29,7 +29,6 @@ double toDouble(QString s, bool* okOut = nullptr)
 Program::Program(QObject *parent)
     : QObject{parent}
 {
-    qRegisterMetaType<RealtimeState>("RealtimeState");
     qRegisterMetaType<ProgramState>("ProgramState");
     qRegisterMetaType<ProgramStateInfo>("ProgramStateInfo");
 
@@ -179,6 +178,24 @@ void Program::updateSensors()
             break;
         }
     }
+
+    if (m_registry && m_registry->valveInfo().driveType == 2 && m_mpi.sensorCount() > 3) {
+        const double pressure1 = m_mpi[1]->value();
+        const double pressure3 = m_mpi[3]->value();
+
+        const double value = std::abs(pressure1 - pressure3);
+
+        double percent = 0.0;
+
+        if (std::abs(pressure3) > 0.000001) {
+            percent = value / std::abs(pressure3) * 100.0;
+        } else if (value > 0.000001) {
+            percent = 100.0;
+        }
+
+        emit driveBalancerUpdated(value, percent);
+    }
+
     if (m_activeRunner)
         emit setTask(m_mpi.dac()->value());
 

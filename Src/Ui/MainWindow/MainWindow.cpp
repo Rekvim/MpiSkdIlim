@@ -5,6 +5,13 @@
 #include "Src/ReportBuilders/ReportBuilder.h"
 #include "./Src/Ui/TestSettings/AbstractTestSettings.h"
 
+#include <QPdfWriter>
+#include <QPainter>
+#include <QPageSize>
+#include <QTextDocument>
+#include <QFile>
+#include <QDesktopServices>
+
 namespace {
 static QString formatRange(double lo, double hi, int prec = 2)
 {
@@ -170,7 +177,10 @@ MainWindow::MainWindow(QWidget *parent)
     m_lineEdits[TextObjects::LineEdit_pressureSensor_1] = ui->lineEdit_pressureSensor_1;
     m_lineEdits[TextObjects::LineEdit_pressureSensor_2] = ui->lineEdit_pressureSensor_2;
     m_lineEdits[TextObjects::LineEdit_pressureSensor_3] = ui->lineEdit_pressureSensor_3;
-    m_lineEdits[TextObjects::LineEdit_feedback_4_20mA] = ui->lineEdit_feedback_4_20mA;
+
+    connect(m_program, &Program::driveBalancerUpdated,
+            this, &MainWindow::updateDriveBalancerUi,
+            Qt::QueuedConnection);
 
     m_program = new Program;
     m_programThread = new QThread(this);
@@ -410,7 +420,7 @@ MainWindow::MainWindow(QWidget *parent)
         "QToolButton:pressed {"
         "   background-color: transparent;"
         "}"
-        );
+    );
 
     ui->toolButton_arrowDown->installEventFilter(this);
 
@@ -459,6 +469,51 @@ MainWindow::MainWindow(QWidget *parent)
         m_telemetryStore.resolutionResults,
         OptionTableKind::Resolution
     );
+
+    connect(ui->pushButton_commentStrokeTest, &QPushButton::clicked,
+            this, [this]() {
+                editTestComment(
+                    "strokeTest",
+                    tr("Тест полного хода"),
+                    tr("Комментарий к тесту полного хода.")
+                    );
+            });
+
+    connect(ui->pushButton_commentMainTest, &QPushButton::clicked,
+            this, [this]() {
+                editTestComment(
+                    "mainTest",
+                    tr("Основной тест"),
+                    tr("Комментарий к основному тесту.")
+                    );
+            });
+
+    connect(ui->pushButton_commentResponseTest, &QPushButton::clicked,
+            this, [this]() {
+                editTestComment(
+                    "responseTest",
+                    tr("Тест на чувствительности реагировани"),
+                    tr("Комментарий к результатам теста нечувствительности.")
+                    );
+            });
+
+    connect(ui->pushButton_commentResolutionTest, &QPushButton::clicked,
+            this, [this]() {
+                editTestComment(
+                    "resolutionTest",
+                    tr("Тест на разрешающую способность"),
+                    tr("Комментарий к результатам теста разрешающей способности.")
+                    );
+            });
+
+    connect(ui->pushButton_commentStepTest, &QPushButton::clicked,
+            this, [this]() {
+                editTestComment(
+                    "stepTest",
+                    tr("тест шаговой реакции"),
+                    tr("Комментарий к ступенчатому тесту.")
+                    );
+            });
 }
 
 MainWindow::~MainWindow()
@@ -487,10 +542,10 @@ void MainWindow::onSupplyPressureEdited()
 
 void MainWindow::lockTabsForPreInit()
 {
-    ui->tabWidget->setTabEnabled(ui->tabWidget->indexOf(ui->tab_mainTests), false);
-    ui->tabWidget->setTabEnabled(1, false);
-    ui->tabWidget->setTabEnabled(2, false);
-    ui->tabWidget->setTabEnabled(3, false);
+    // ui->tabWidget->setTabEnabled(ui->tabWidget->indexOf(ui->tab_mainTests), false);
+    // ui->tabWidget->setTabEnabled(1, false);
+    // ui->tabWidget->setTabEnabled(2, false);
+    // ui->tabWidget->setTabEnabled(3, false);
 }
 
 QTabWidget* MainWindow::currentInnerTabWidget() const
@@ -968,6 +1023,8 @@ void MainWindow::setRegistry(Registry *registry)
                 .arg(valveInfo.driveRangeHigh, 0, 'f', 2)
             );
     }
+    ui->groupBox_driveBalancer->setVisible(valveInfo.driveType == 2);
+
 
     ui->widget_crossingLimits_frictionForce->setVisible(limits.frictionEnabled);
     ui->widget_crossingLimits_linearCharacteristic->setVisible(limits.linearCharacteristicEnabled);
@@ -1003,6 +1060,8 @@ void MainWindow::setRegistry(Registry *registry)
         m_chartsInitialized = true;
     }
 
+    initSensorLineEditBorders();
+
     m_program->setRegistry(registry);
     m_programThread->start();
 
@@ -1037,7 +1096,7 @@ void MainWindow::setStepTestResults(const QVector<StepTest::TestResult> &results
     ui->tableWidget_stepResults->setColumnCount(2);
 
     auto *item1 = new QTableWidgetItem(tr(("T%1")).arg(T_value));
-    item1->setBackground(QColor("#fd7d13"));
+    item1->setBackground(QColor(QStringLiteral("#fd7d13")));
 
     auto *item2 = new QTableWidgetItem(tr("Перерегулирование"));
     item2->setBackground(QColor(Qt::red));
@@ -1234,136 +1293,192 @@ void MainWindow::onMainTestParametersRequested(MainTestSettings::TestParameters 
     }
 }
 
-void MainWindow::buildOptionTable(
-    QTableWidget* table,
-    const OptionDirectionResults& results,
-    OptionTableKind kind)
+void MainWindow::buildOptionTable(QTableWidget* table,
+                                  const OptionDirectionResults& results,
+                                  OptionTableKind kind)
 {
+    const int steps = std::max(results.upward.size(),
+                               results.downward.size());
     table->clear();
 
-    const int steps =
-        std::max(results.upward.size(),
-                 results.downward.size());
+    const bool isResponse =
+        kind == OptionTableKind::Response;
 
     const int cols = steps + 2;
 
-    if(kind == OptionTableKind::Response)
-        table->setRowCount(11);
-    else
-        table->setRowCount(10);
+    const int upTitleRow = 0;
+    const int upHeaderRow = 1;
+    const int upBaseRow = 2;
 
+    const int upAllowedErrorRow = isResponse ? upBaseRow + 2 : -1;
+    const int upErrorRow = isResponse ? upBaseRow + 3 : upBaseRow + 2;
+
+    const int downTitleRow = isResponse ? 6 : 5;
+    const int downHeaderRow = downTitleRow + 1;
+    const int downBaseRow = downHeaderRow + 1;
+
+    const int downAllowedErrorRow = isResponse ? downBaseRow + 2 : -1;
+    const int downErrorRow = isResponse ? downBaseRow + 3 : downBaseRow + 2;
+
+    const int gisRow = isResponse ? downErrorRow + 1 : -1;
+
+    const int rows = isResponse ? gisRow + 1 : downErrorRow + 1;
+
+    table->setRowCount(rows);
     table->setColumnCount(cols);
-
-    table->horizontalHeader()->setVisible(false);
-    table->verticalHeader()->setVisible(false);
-
-    table->setEditTriggers(QAbstractItemView::NoEditTriggers);
     table->setSelectionMode(QAbstractItemView::NoSelection);
 
-    auto set = [&](int r,int c,const QString& text)
+    auto allowedErrorForStep = [](int stepIndex) -> double
+    {
+        switch (stepIndex) {
+        case 0:
+        case 1:
+            return 15.0;
+        case 2:
+            return 25.0;
+        case 3:
+            return 50.0;
+        default:
+            return std::numeric_limits<double>::quiet_NaN();
+        }
+    };
+
+    auto set = [&](int r, int c, const QString& text)
     {
         auto *item = new QTableWidgetItem(text);
         item->setTextAlignment(Qt::AlignCenter);
 
         if (text == "Восходящее движение") {
             item->setBackground(QColor(Qt::yellow));
-        } else if (text == "Нисходящее движение" || text == "Ошибка по положению, %") {
-            item->setBackground(QColor("#fd7d13"));
-        } else if (
-            text == "Задание, %" ||
-            text == "Факт, %" ||
-            text == "Ошибка на шаг, %"
-            ) {
+        } else if (text == "Нисходящее движение" ||
+                   text == "Ошибка по положению, %") {
+            item->setBackground(QColor(QStringLiteral("#fd7d13")));
+        } else if (text == "Задание, %" ||
+                   text == "Факт, %" ||
+                   text == "Допустимая ошибка, %" ||
+                   text == "Ошибка на шаг, %") {
             item->setBackground(QColor(Qt::green));
         }
-        table->setItem(r,c,item);
+
+        table->setItem(r, c, item);
     };
 
-    table->setSpan(0, 0, 1, cols);
+    auto setColored = [&](int r,
+                          int c,
+                          const QString& text,
+                          const QColor& color)
+    {
+        auto *item = new QTableWidgetItem(text);
+        item->setTextAlignment(Qt::AlignCenter);
+        item->setBackground(color);
+        table->setItem(r, c, item);
+    };
 
-    set(0, 0, "Восходящее движение");
-    set(1, 0, "Положение хода клапана");
+    table->setSpan(upTitleRow, 0, 1, cols);
+    set(upTitleRow, 0, "Восходящее движение");
 
-    for(int i = 0; i <= steps; i++)
+    set(upHeaderRow, 0, "Положение хода клапана");
+
+    for (int i = 0; i <= steps; ++i)
     {
         QString header;
 
-        if(i==0)
+        if (i == 0) {
             header = "Задание";
-        else
-        {
-            if(kind==OptionTableKind::Response)
-                header = QString("Задание + шаг %1").arg(i);
-            else
-                header = QString("Ступенчатый шаг %1").arg(i);
+        } else if (isResponse) {
+            header = QString("Задание + шаг %1").arg(i);
+        } else {
+            header = QString("Ступенчатый шаг %1").arg(i);
         }
 
-        set(1, i + 1, header);
+        set(upHeaderRow, i + 1, header);
     }
 
-    set(2, 0, "Задание, %");
-    set(3, 0, "Факт, %");
-    set(4, 0, "Ошибка на шаг, %");
+    set(upBaseRow, 0, "Задание, %");
+    set(upBaseRow + 1, 0, "Факт, %");
 
-    table->setSpan(5, 0, 1, cols);
+    if (isResponse) {
+        set(upAllowedErrorRow, 0, "Допустимая ошибка, %");
+        set(upErrorRow, 0, "Ошибка на шаг, %");
+    } else {
+        set(upErrorRow, 0, "Ошибка на шаг, %");
+    }
 
-    set(5, 0, "Нисходящее движение");
-    set(6, 0, "Положение хода клапана");
+    table->setSpan(downTitleRow, 0, 1, cols);
+    set(downTitleRow, 0, "Нисходящее движение");
 
-    for(int i = 0; i <= steps; i++) {
+    set(downHeaderRow, 0, "Положение хода клапана");
+
+    for (int i = 0; i <= steps; ++i)
+    {
         QString header;
 
-        if(i == 0)
+        if (i == 0) {
             header = "Задание";
-        else {
-            if(kind==OptionTableKind::Response)
-                header = QString("Задание - шаг %1").arg(i);
-            else
-                header = QString("Ступенчатый шаг %1").arg(i);
+        } else if (isResponse) {
+            header = QString("Задание - шаг %1").arg(i);
+        } else {
+            header = QString("Ступенчатый шаг %1").arg(i);
         }
 
-        set(6, i + 1, header);
+        set(downHeaderRow, i + 1, header);
     }
 
-    set(7, 0, "Задание, %");
-    set(8, 0, "Факт, %");
-    set(9, 0, "Ошибка на шаг, %");
+    set(downBaseRow, 0, "Задание, %");
+    set(downBaseRow + 1, 0, "Факт, %");
 
-    if(kind==OptionTableKind::Response) {
-        set(10, 0, "Ошибка по положению, %");
-        double gis = qAbs(results.baseActual - results.baseActual_two);
-        table->setSpan(10, 2, 1, 6);
-        set(10, 1, QString::number(gis, 'f', 2));
+    if (isResponse) {
+        set(downAllowedErrorRow, 0, "Допустимая ошибка, %");
+        set(downErrorRow, 0, "Ошибка на шаг, %");
+
+        set(gisRow, 0, "Ошибка по положению, %");
+
+        if (std::isfinite(results.baseActual) &&
+            std::isfinite(results.baseActual_two))
+        {
+            const double gis =
+                qAbs(results.baseActual - results.baseActual_two);
+
+            table->setSpan(gisRow, 2, 1, cols - 2);
+            set(gisRow, 1, QString::number(gis, 'f', 2));
+        }
+    } else {
+        set(downErrorRow, 0, "Ошибка на шаг, %");
     }
 
     auto fillDirection =
-        [&](const QVector<OptionStepRecord>& data, int baseRow)
+        [&](const QVector<OptionStepRecord>& data,
+            int baseRow,
+            double baseActualValue)
     {
-        if(std::isfinite(results.baseTask))
+        const int allowedErrorRow =
+            isResponse ? baseRow + 2 : -1;
+
+        const int errorRow =
+            isResponse ? baseRow + 3 : baseRow + 2;
+
+        if (std::isfinite(results.baseTask)) {
             set(baseRow, 1, QString::number(results.baseTask, 'f', 2));
+        }
 
-        double baseActualValue = results.baseActual;
-
-        if (kind == OptionTableKind::Response && baseRow == 7)
-            baseActualValue = results.baseActual_two;
-
-        if (std::isfinite(baseActualValue))
+        if (std::isfinite(baseActualValue)) {
             set(baseRow + 1, 1, QString::number(baseActualValue, 'f', 2));
+        }
 
-        for(int i = 0 ; i < data.size(); i++)
+        for (int i = 0; i < data.size(); ++i)
         {
             const auto& step = data[i];
-
-            int col = i + 2;
+            const int col = i + 2;
 
             QString selectedText;
 
-            if(std::isfinite(results.baseTask))
+            if (std::isfinite(results.baseTask))
             {
-                double base = results.baseTask;
-                double delta = step.selectedPercent - base;
+                const double base = results.baseTask;
+                const double delta = step.selectedPercent - base;
 
-                QChar sign = delta >= 0 ? '+' : '-';
+                const QChar sign =
+                    delta >= 0.0 ? '+' : '-';
 
                 selectedText = QString("%1 %2 %3")
                                    .arg(base, 0, 'f', 2)
@@ -1372,17 +1487,59 @@ void MainWindow::buildOptionTable(
             }
             else
             {
-                selectedText = QString::number(step.selectedPercent,'f',2);
+                selectedText =
+                    QString::number(step.selectedPercent, 'f', 2);
             }
 
-            set(baseRow,col,selectedText);
-            set(baseRow + 1, col, QString::number(step.actualPercent, 'f', 2));
-            set(baseRow + 2, col, QString::number(step.stepErrorPercent, 'f', 2));
+            set(baseRow, col, selectedText);
+
+            set(baseRow + 1,
+                col,
+                QString::number(step.actualPercent, 'f', 2));
+
+            if (isResponse)
+            {
+                const double allowedError =
+                    allowedErrorForStep(i);
+
+                set(allowedErrorRow,
+                    col,
+                    std::isfinite(allowedError)
+                        ? QString::number(allowedError, 'f', 2)
+                        : "");
+
+                const bool isOk =
+                    std::isfinite(allowedError) &&
+                    std::isfinite(step.stepErrorPercent) &&
+                    qAbs(step.stepErrorPercent) <= allowedError;
+
+                setColored(errorRow,
+                           col,
+                           std::isfinite(step.stepErrorPercent)
+                               ? QString::number(step.stepErrorPercent, 'f', 2)
+                               : "",
+                           isOk
+                               ? QColor(198, 239, 206)
+                               : QColor(255, 199, 206));
+            }
+            else
+            {
+                set(errorRow,
+                    col,
+                    QString::number(step.stepErrorPercent, 'f', 2));
+            }
         }
     };
 
-    fillDirection(results.upward,2);
-    fillDirection(results.downward,7);
+    fillDirection(results.upward,
+                  upBaseRow,
+                  results.baseActual);
+
+    fillDirection(results.downward,
+                  downBaseRow,
+                  isResponse
+                      ? results.baseActual_two
+                      : results.baseActual);
 
     table->resizeColumnsToContents();
 }
@@ -1628,6 +1785,86 @@ void MainWindow::syncTaskChartSeriesVisibility(quint8 sensorCount)
     ch->visible(4, sensorCount > 3 && ui->checkBox_showCurve_pressure_3->isChecked());
 }
 
+void MainWindow::updateDriveBalancerUi(double value, double percent)
+{
+    ui->lineEdit_driveBalancerValue->setText(QString::number(value, 'f', 2));
+    ui->lineEdit_driveBalancerPercent->setText(QString::number(percent, 'f', 2));
+
+    const bool isBad = percent > 17.0;
+
+    const QString color = isBad
+                              ? QStringLiteral("#B80F0F")
+                              : QStringLiteral("#4E8448");
+
+    ui->lineEdit_driveBalancerValue->setStyleSheet(QStringLiteral(
+                                                       "QLineEdit {"
+                                                       "    border: 2px solid %1;"
+                                                       "    border-radius: 4px;"
+                                                       "    padding: 2px 4px;"
+                                                       "}"
+                                                       ).arg(color));
+}
+static
+void applyGroupBoxColor(QGroupBox* groupBox, const QColor& color)
+{
+    if (!groupBox)
+        return;
+
+    groupBox->setStyleSheet(QStringLiteral(
+                                "QGroupBox {"
+                                "    border: 1px solid %1;"
+                                "    border-radius: 6px;"
+                                "    margin-top: 10px;"
+                                "    padding-top: 8px;"
+                                "}"
+                                ""
+                                "QGroupBox::title {"
+                                "    subcontrol-origin: margin;"
+                                "    subcontrol-position: top center;"
+                                "    padding: 0 2px;"
+                                "}"
+                                ).arg(color.name(QColor::HexRgb)));
+}
+
+void MainWindow::initSensorLineEditBorders()
+{
+    const auto& colors = m_registry->sensorColors();
+
+    auto applySensorStyle = [](QLineEdit* lineEdit, const QColor& color) {
+        if (!lineEdit)
+            return;
+
+        const QString commonBorderColor = QStringLiteral("#F1F1F1");
+        const QString bottomColor = color.name(QColor::HexRgb);
+
+        lineEdit->setStyleSheet(QStringLiteral(
+                                    "QLineEdit {"
+                                    "    background: white;"
+                                    "    border-top: 1px solid %1;"
+                                    "    border-left: 1px solid %1;"
+                                    "    border-right: 1px solid %1;"
+                                    "    border-bottom: 1px solid %2;"
+                                    "    border-radius: 4px;"
+                                    "    padding: 3px 6px;"
+                                    "}"
+                                    ).arg(commonBorderColor, bottomColor));
+    };
+
+    const QColor linearColor(colors.linear);
+
+    applyGroupBoxColor(ui->groupBox_linearMotionSensor, QColor(colors.linear));
+    applyGroupBoxColor(ui->groupBox_pressureSensor_1, QColor(colors.pressure1));
+    applyGroupBoxColor(ui->groupBox_pressureSensor_2, QColor(colors.pressure2));
+    applyGroupBoxColor(ui->groupBox_pressureSensor_3, QColor(colors.pressure3));
+
+    applySensorStyle(ui->lineEdit_linearSensor, linearColor);
+    applySensorStyle(ui->lineEdit_linearSensorPercent, linearColor);
+    applySensorStyle(ui->lineEdit_driveBalancerPercent, linearColor);
+
+    applySensorStyle(ui->lineEdit_pressureSensor_1, QColor(colors.pressure1));
+    applySensorStyle(ui->lineEdit_pressureSensor_2, QColor(colors.pressure2));
+    applySensorStyle(ui->lineEdit_pressureSensor_3, QColor(colors.pressure3));
+}
 void MainWindow::initCharts()
 {
     auto& valveInfo = m_registry->valveInfo();
@@ -1968,6 +2205,228 @@ void MainWindow::restoreSeries(Charts chart, const SeriesVisibilityBackup& b)
     if (chart == Charts::Pressure && b.visible.size() == 1) {
         ch->visible(1, b.visible[0]);
     }
+}
+
+void MainWindow::editTestComment(const QString& testKey,
+                                 const QString& title,
+                                 const QString& description)
+{
+    QDialog dialog(this);
+
+    auto* layout = new QVBoxLayout(&dialog);
+
+    auto* titleLabel = new QLabel(QString("<b>%1</b>").arg(title), &dialog);
+    titleLabel->setTextFormat(Qt::RichText);
+
+    auto* descriptionLabel = new QLabel(description, &dialog);
+    descriptionLabel->setWordWrap(true);
+
+    auto* textEdit = new QTextEdit(&dialog);
+    textEdit->setPlainText(m_testComments.value(testKey));
+
+    auto* buttons = new QDialogButtonBox(
+        QDialogButtonBox::Save | QDialogButtonBox::Cancel,
+        &dialog
+    );
+
+    layout->addWidget(titleLabel);
+    layout->addWidget(descriptionLabel);
+    layout->addWidget(textEdit);
+    layout->addWidget(buttons);
+
+    connect(buttons, &QDialogButtonBox::accepted,
+            &dialog, &QDialog::accept);
+
+    connect(buttons, &QDialogButtonBox::rejected,
+            &dialog, &QDialog::reject);
+
+    if (dialog.exec() == QDialog::Accepted) {
+        const QString comment = textEdit->toPlainText().trimmed();
+
+        if (comment.isEmpty()) {
+            m_testComments.remove(testKey);
+        } else {
+            m_testComments[testKey] = comment;
+        }
+
+        saveCommentsPdfIfNeeded();
+    }
+}
+
+bool MainWindow::hasAnyTestComments() const
+{
+    for (auto it = m_testComments.constBegin(); it != m_testComments.constEnd(); ++it) {
+        if (!it.value().trimmed().isEmpty())
+            return true;
+    }
+
+    return false;
+}
+
+QString MainWindow::commentsPdfPath() const
+{
+    if (!m_reportSaver)
+        return QString();
+
+    return m_reportSaver->directory().filePath(tr("Комментарии.pdf"));
+}
+
+void MainWindow::saveCommentsPdfIfNeeded()
+{
+    if (!m_reportSaver)
+        return;
+
+    if (!m_reportSaver->ensureDirectory())
+        return;
+
+    const QString path =
+        m_reportSaver->directory().filePath(tr("Комментарии.pdf"));
+
+    if (!hasAnyTestComments()) {
+        QFile::remove(path);
+        return;
+    }
+
+    QPdfWriter writer(path);
+    writer.setPageSize(QPageSize(QPageSize::A4));
+    writer.setResolution(300);
+    writer.setPageMargins(
+        QMarginsF(15, 15, 15, 15),
+        QPageLayout::Millimeter
+        );
+
+    QTextDocument document;
+    document.setHtml(buildCommentsHtml());
+
+    document.print(&writer);
+}
+
+QString MainWindow::buildCommentsHtml() const
+{
+    auto block = [this](const QString& key,
+                        const QString& title,
+                        const QString& description) -> QString
+    {
+        const QString comment = m_testComments.value(key).trimmed();
+
+        if (comment.isEmpty())
+            return QString();
+
+        return QString(R"(
+            <div class="card">
+                <h2>%1</h2>
+                <p class="description">%2</p>
+                <div class="comment-title">Комментарий</div>
+                <p class="comment">%3</p>
+            </div>
+        )")
+            .arg(title.toHtmlEscaped())
+            .arg(description.toHtmlEscaped())
+            .arg(comment.toHtmlEscaped().replace("\n", "<br>"));
+    };
+
+    QString html;
+
+    html += QStringLiteral(R"(
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+
+<style>
+body {
+    font-family: Arial, sans-serif;
+    color: #222222;
+}
+
+h1 {
+    font-size: 22pt;
+    margin-bottom: 4px;
+}
+
+.subtitle {
+    font-size: 9pt;
+    color: #666666;
+    margin-bottom: 20px;
+}
+
+.card {
+    border: 1px solid #d0d0d0;
+    padding: 12px;
+    margin-bottom: 14px;
+}
+
+.card h2 {
+    font-size: 14pt;
+    margin: 0 0 4px 0;
+}
+
+.description {
+    font-size: 9pt;
+    color: #666666;
+    margin-bottom: 10px;
+}
+
+.comment-title {
+    font-size: 9pt;
+    font-weight: bold;
+    color: #444444;
+    margin-bottom: 4px;
+}
+
+.comment {
+    font-size: 10pt;
+    line-height: 1.4;
+}
+</style>
+</head>
+
+<body>
+)");
+
+    html += QStringLiteral("<h1>Комментарии к испытаниям</h1>");
+
+    html += QString("<div class=\"subtitle\">Сформировано: %1</div>")
+                .arg(QDateTime::currentDateTime()
+                         .toString("dd.MM.yyyy HH:mm")
+                         .toHtmlEscaped());
+
+    html += block(
+        QStringLiteral("strokeTest"),
+        tr("Тест полного хода"),
+        tr("Комментарий к тесту полного хода.")
+        );
+
+    html += block(
+        QStringLiteral("mainTest"),
+        tr("Основной тест"),
+        tr("Комментарий к основному тесту.")
+        );
+
+    html += block(
+        QStringLiteral("responseTest"),
+        tr("Тест нечувствительности"),
+        tr("Комментарий к результатам теста нечувствительности.")
+        );
+
+    html += block(
+        QStringLiteral("resolutionTest"),
+        tr("Тест разрешающей способности"),
+        tr("Комментарий к результатам теста разрешающей способности.")
+        );
+
+    html += block(
+        QStringLiteral("stepTest"),
+        tr("Тест шаговой реакции"),
+        tr("Комментарий к ступенчатому тесту.")
+        );
+
+    html += QStringLiteral(R"(
+</body>
+</html>
+)");
+
+    return html;
 }
 
 void MainWindow::collectReportOverrides()
