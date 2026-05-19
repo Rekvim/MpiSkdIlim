@@ -1,13 +1,14 @@
-#ifndef TELEMETRYSTORE_H
-#define TELEMETRYSTORE_H
-
 #pragma once
 
 #include <QVector>
 #include <QString>
 #include <QColor>
 
-#include <QMetaType>
+#include "Domain/Tests/Stroke/Result.h"
+#include "Domain/Tests/Main/Result.h"
+#include "Domain/Tests/Option/Step/Result.h"
+#include "Domain/Tests/Option/Resolution/Result.h"
+#include "Domain/Tests/Option/Response/Result.h"
 
 struct InitState {
     QString deviceStatusText = "";
@@ -22,40 +23,6 @@ struct InitState {
     QColor finalPositionColor = QColor();
 };
 
-struct StepTestRecord {
-    quint16 from = 0;
-    quint16 to = 0;
-    quint32 T_value = 0;
-    qreal overshoot = 0.0;
-};
-
-struct OptionStepRecord {
-    double selectedPercent = 0;
-    double actualPercent = 0.0;
-    double stepErrorPercent = 0.0;
-};
-
-struct OptionDirectionResults {
-    double baseTask = 0.0;
-    double baseActual = 0.0;
-    double baseActual_two = 0.0;
-    QVector<OptionStepRecord> upward;
-    QVector<OptionStepRecord> downward;
-};
-
-struct RangeDeviationRecord {
-    qint16 rangePercent = 0;
-    double maxForwardValue = 0.0;
-    qint16 maxForwardCycle = 0;
-    double maxReverseValue = 0.0;
-    qint16 maxReverseCycle = 0;
-};
-
-struct StrokeTestRecord {
-    QString timeForwardMs = "";
-    QString timeBackwardMs = "";
-};
-
 struct CrossingStatus {
     enum class State {
         Unknown,
@@ -64,34 +31,10 @@ struct CrossingStatus {
     };
 
     State frictionPercent = State::Unknown;
-    State range = State::Unknown;
+    State valveStroke = State::Unknown;
     State dynamicError = State::Unknown;
     State spring = State::Unknown;
     State linearCharacteristic = State::Unknown;
-};
-
-
-struct MainTestRecord {
-    double dynamicError_mean = 0.0;
-    double dynamicError_meanPercent = 0.0; // %
-
-    double dynamicError_max = 0.0;   // %
-    double dynamicError_maxPercent = 0.0;   // %
-
-    double dynamicErrorReal = 0.0;   // %
-
-    double lowLimitPressure = 0.0;  // бар
-    double highLimitPressure = 0.0;  // бар
-
-    double springLow = 0.0;  // Н
-    double springHigh = 0.0;  // Н
-
-    double pressureDifference = 0.0;  // бар
-    double frictionForce = 0.0;  //
-    double frictionPercent = 0.0;  // %
-
-    double linearityError = 0.0;
-    double linearity = 0.0;
 };
 
 struct ValveStrokeRecord {
@@ -103,31 +46,30 @@ struct SupplyRecord {
     double pressure_bar = 0.0;
 };
 
-class TelemetryStore {
+class Telemetry {
 public:
     InitState init;
-
-    QVector<StepTestRecord> stepResults;
-    OptionDirectionResults responseResults;
-    OptionDirectionResults resolutionResults;
-    StrokeTestRecord strokeTestRecord;
     ValveStrokeRecord valveStrokeRecord;
     SupplyRecord supplyRecord;
-    MainTestRecord mainTestRecord;
     CrossingStatus crossingStatus;
 
-    TelemetryStore() = default;
+    std::optional<Domain::Tests::Stroke::Result> testStroke;
+    std::optional<Domain::Tests::Main::Result> testMain;
+    std::optional<Domain::Tests::Option::Step::Result> testStep;
+    std::optional<Domain::Tests::Option::Resolution::Result> testResolution;
+    std::optional<Domain::Tests::Option::Response::Result> testResponse;
+
+    Telemetry() = default;
 
     void clearAll() {
         init = {};
-        stepResults.clear();
-        responseResults = {};
-        resolutionResults = {};
-        strokeTestRecord = {};
+        testMain.reset();
+        testStroke.reset();
+        testStep.reset();
+        testResolution.reset();
+        testResponse.reset();
         valveStrokeRecord = {};
         supplyRecord = {};
-        mainTestRecord = {};
+
     }
 };
-
-#endif // TELEMETRYSTORE_H

@@ -7,19 +7,50 @@
 #include <QMessageBox>
 #include <QTimer>
 
-#include "Src/Mpi/Mpi.h"
-#include "Src/Ui/TestSettings/OtherTestSettings.h"
-#include "Src/Ui/TestSettings/StepTestSettings.h"
+#include "Domain/Mpi/Device.h"
 
-#include "Src/Storage/Registry.h"
-#include "Src/Storage/Telemetry.h"
-#include "Src/Runners/AbstractTestRunner.h"
+#include "Widgets/Chart/ChartType.h"
+#include "Widgets/Chart/Point.h"
 
-#include "Src/Domain/Tests/StepTest.h"
-#include "Src/Domain/Tests/MainTest.h"
-#include "Src/Ui/Setup/SelectTests.h"
 
-enum class TextObjects {
+#include "Storage/Telemetry.h"
+
+#include "Domain/Measurement/Sample.h"
+#include "Domain/Measurement/TestDataBuffer.h"
+#include "Domain/Tests/IAnalyzer.h"
+
+#include "Domain/Tests/BaseRunner.h"
+
+#include "Gui/Setup/SelectTests.h"
+#include "DeviceConfig.h"
+
+namespace Domain::Tests {
+class AbstractScenario;
+}
+
+namespace Domain::Tests {
+class Context;
+}
+
+namespace Domain::Tests::Main {
+struct Params;
+}
+
+namespace Domain::Tests::Option {
+struct Params;
+}
+
+namespace Domain::Tests::Option::Step {
+struct Params;
+struct Result;
+}
+
+namespace Widgets::Chart {
+struct Point;
+}
+
+enum class TextObjects
+{
     LineEdit_linearSensor,
     LineEdit_linearSensorPercent,
     LineEdit_pressureSensor_1,
@@ -28,191 +59,133 @@ enum class TextObjects {
     LineEdit_feedback_4_20mA,
 };
 
-enum class Charts {
-    Task,
-    Pressure,
-    Friction,
-    Response,
-    Resolution,
-    Stroke,
-    Step,
-    Trend
-};
-
-struct Point
-{
-    quint8 seriesNum;
-    qreal X;
-    qreal Y;
-};
-
-enum class ProgramState {
-    Disconnected,
-    Connecting,
-    Initializing,
-    Ready,
-    Running,
-    Stopping,
-    Error
-};
-
-struct ProgramStateInfo {
-    ProgramState state = ProgramState::Disconnected;
-    QString message;
-};
-
+namespace Domain {
 class Program : public QObject
 {
     Q_OBJECT
 public:
-    explicit Program(QObject *parent = nullptr);
-    void setRegistry(Registry *registry);
-    bool isInitialized() const;
 
-    const Registry* registry() const { return m_registry; }
+    explicit Program(QObject *parent = nullptr);
+
+    void setConfig(const Domain::DeviceConfig& deviceConfig) { m_deviceConfig = deviceConfig; }
+
+    quint8 getDIStatus() { return m_device.digitalInputs(); }
+    quint8 getDOStatus() { return m_device.digitalOutputs(); }
+
+    enum class TestWorker
+    {
+        None,
+        Stroke,
+        Main,
+        Response,
+        Resolution,
+        Step
+    };
+
 
 signals:
-    void driveBalancerUpdated(double value, double percent);
-    void telemetryUpdated(const TelemetryStore &store);
+    void sampleReady(const Domain::Measurement::Sample& sample);
+    void testStartRejected(const QString& reason);
+    void telemetryUpdated(const Telemetry& telemetry);
 
-    void programStateChanged(const ProgramStateInfo& info);
+    void errorOccured(const QString& error);
 
-    void errorOccured(const QString&);
-
-    void testReallyFinished();
-    void testStarted();
     void testActuallyStarted();
 
-    void setText(const TextObjects object, const QString &text);
+    void setSensorsMask(quint8 adcMask);
+
+    void setText(const TextObjects object, const QString& text);
     void setTextColor(const TextObjects object, const QColor color);
     void setTask(qreal task);
     void setSensorNumber(quint8 num);
-    void setButtonInitEnabled(bool enable);
     void setGroupDOVisible(bool visible);
-    void setVisible(Charts chart, quint16 series, bool visible);
+    void setVisible(Widgets::Chart::ChartType chart, quint16 series, bool visible);
     void setRegressionEnable(bool enable);
 
-    void setStepResults(const QVector<StepTest::TestResult> &results, quint32 T_value);
+    void mainResultUpdated(const Domain::Tests::Main::Result& result);
+    void strokeResultUpdated(const Domain::Tests::Stroke::Result& result);
+    void stepResultUpdated(const Domain::Tests::Option::Step::Result& result);
+    void resolutionResultUpdated(const Domain::Tests::Option::Resolution::Result& result);
+    void responseResultUpdated(const Domain::Tests::Option::Response::Result& result);
+    void crossingStatusUpdated(const CrossingStatus& status);
+
     void setDoButtonsChecked(quint8 status);
 
     void setDiCheckboxesChecked(quint8 status);
 
-    void getPoints_mainTest(QVector<QVector<QPointF>> &points, Charts chart);
-    void getPoints_stepTest(QVector<QVector<QPointF>> &points, Charts chart);
-    void getPoints_responseTest(QVector<QVector<QPointF>> &points, Charts chart);
-    void getPoints_resolutionTest(QVector<QVector<QPointF>> &points, Charts chart);
-    void getPoints_strokeTest(QVector<QVector<QPointF>> &points, Charts chart);
+    void points(QVector<QVector<QPointF>>& points, Widgets::Chart::ChartType chartType);
 
-    void addPoints(Charts chart, const QVector<Point>& points);
-    void clearPoints(Charts chart);
+    void addPoints(Widgets::Chart::ChartType chartType, const QVector<Widgets::Chart::Point>& points);
+    void clearPoints(Widgets::Chart::ChartType chartType);
 
     void stopTheTest();
-    void showDots(bool visible);
-    void setTaskControlsEnabled(bool enable);
     void duplicateMainChartsSeries();
     void releaseBlock();
 
-    void mainTestFinished();
-    void getParameters_mainTest(MainTestSettings::TestParameters &parameters);
-    void getParameters_stepTest(StepTestSettings::TestParameters &parameters);
-    void getParameters_resolutionTest(OtherTestSettings::TestParameters &parameters);
-    void getParameters_responseTest(OtherTestSettings::TestParameters &parameters);
-
-    void question(QString &title, QString &text, bool &result);
+    bool question(QString& title, QString& text);
 
     void testFinished();
 
     void totalTestTimeMs(quint64 totalMs);
+    void runnerFinished();
 
 private:
+    bool isDeviceReadyForTest() const;
+    void failToStartTest(const QString& reason);
+    DeviceConfig m_deviceConfig;
     SelectTests::PatternType m_patternType;
 
-    ProgramState m_state = ProgramState::Disconnected;
-    void setState(ProgramState s, QString msg = QString());
+    // Sample
+    Domain::Measurement::Sample makeSample() const;
+    void updateRealtimeTexts(const Domain::Measurement::Sample& s);
+    Domain::Measurement::TestDataBuffer m_testDataBuffer;
 
-    inline qreal calcPercent(qreal value, bool invert = false) {
-        qreal percent = ((value - 4.0) / 16.0) * 100.0;
-        percent = qBound<qreal>(0.0, percent, 100.0);
-        return invert ? (100.0 - percent) : percent;
-    }
-
-    std::unique_ptr<AbstractTestRunner> m_activeRunner;
-    template<typename RunnerT>
-    void startRunner(std::unique_ptr<RunnerT> r) {
-        disposeActiveRunnerAsync();
-        connect(r.get(), &AbstractTestRunner::requestClearChart, this, [this](int chart){
-            emit clearPoints(static_cast<Charts>(chart));
-        });
-        connect(r.get(), &AbstractTestRunner::testActuallyStarted,
-                this, &Program::testActuallyStarted);
-
-        connect(r.get(), &AbstractTestRunner::requestSetDAC,
-                this, &Program::setDacRaw);
-
-        connect(this, &Program::releaseBlock,
-                r.get(), &AbstractTestRunner::releaseBlock);
-
-        connect(r.get(), &AbstractTestRunner::totalTestTimeMs,
-                this, &Program::totalTestTimeMs);
-
-        connect(r.get(), &AbstractTestRunner::endTest,
-                this, &Program::endTest);
-
-        connect(this, &Program::stopTheTest,
-                r.get(), &AbstractTestRunner::stop);
-
-        emit setButtonInitEnabled(false);
-        emit setTaskControlsEnabled(false);
-
-        m_activeRunner = std::move(r);
-        emit testStarted();
-        m_activeRunner->start();
-    }
-
-    void updateCrossingStatus();
-
-    void disposeActiveRunnerAsync();
+    std::unique_ptr<IAnalyzer> m_analyzer;
+    TestWorker m_testWorker = TestWorker::None;
+    std::unique_ptr<Domain::Tests::AbstractScenario> m_currentScenario;
+    //
+    void onRunnerActuallyStarted();
 
     // init
-    bool connectAndInitDevice();
-    bool detectAndReportSensors();
     void waitForDacCycle();
-    void measureStartPosition(bool normalClosed);
-    void measureStartPositionShutoff(bool normalClosed);
-
-    void measureEndPosition(bool normalClosed);
-    void measureEndPositionShutoff(bool normalClosed);
-
-    void calculateAndApplyCoefficients();
-    void recordStrokeRange(bool normalClosed);
     void finalizeInitialization();
 
+    bool m_suppressPublicTestFinished = false;
 
-    Registry *m_registry;
+    void startScenario(std::unique_ptr<Domain::Tests::AbstractScenario> scenario);
+    void connectScenarioRuntime(Domain::Tests::AbstractScenario* scenario);
 
-    Mpi m_mpi;
+    Tests::Context makeContext();
 
-    TelemetryStore m_telemetryStore;
+    QVector<quint16> makeRawValues(const QVector<quint16>& seq, bool normalOpen);
+    QString seqToString(const QVector<quint16>& seq);
 
-    QTimer *m_timerSensors;
-    // QTimer *m_timerDI;
+    Registry* m_registry;
+
+    Domain::Mpi::Device m_device;
+
+    Telemetry m_telemetry;
+    QTimer* m_diPollTimer = nullptr;
+    quint8 m_lastDiStatus = 0;
+    QTimer* m_timerSensors;
+    QTimer* m_timerDI;
 
     quint64 m_startTime;
     quint64 m_initTime;
     QEventLoop *m_dacEventLoop;
 
     bool m_isInitialized = false;
+    bool m_isTestRunning = false;
     bool m_isDacStopRequested;
     bool m_shouldWaitForButton = false;
-    // QVector<bool> m_initialDoStates;
-    // QVector<bool> m_savedInitialDoStates;
+    QVector<bool> m_initialDoStates;
+    QVector<bool> m_savedInitialDoStates;
 
 private slots:
     void updateSensors();
 
 public slots:
-
-    // void setMultipleDO(const QVector<bool>& states);
+    void setMultipleDO(const QVector<bool>& states);
 
     void setDacRaw(quint16 dac,
                 quint32 sleep_ms = 0,
@@ -221,38 +194,24 @@ public slots:
 
     void initialization();
 
-    void updateCharts_mainTest();
-    void updateCharts_strokeTest();
-    void updateCharts_optionTest(Charts chart);
+    // updateCharts
+    void updateChartsFromSample(const Domain::Measurement::Sample& s);
+    void updateMainCharts(const Domain::Measurement::Sample& s);
+    void updateTimeChart(const Domain::Measurement::Sample& s, Widgets::Chart::ChartType chartType, qint64 time);
 
-    void results_mainTest(const MainTest::TestResults &results);
-    void results_strokeTest(const quint64 forwardTime, const  quint64 backwardTime);
-    void results_stepTest(const QVector<StepTest::TestResult> &results, const quint32 T_value);
-    void results_resolutionTest(const OptionTest::OptionResults &results);
-    void results_responseTest(const OptionTest::OptionResults &results);
-    // void setInitDOStates(const QVector<bool> &states);
+    void setInitDoStates(const QVector<bool>& states);
     void setPattern(SelectTests::PatternType pattern) { m_patternType = pattern; }
 
-    void addRegression(const QVector<QPointF> &points);
-    void addFriction(const QVector<QPointF> &points);
+    void addRegression(const QVector<QPointF>& points);
+    void addFriction(const QVector<QPointF>& points);
 
-    void receivedPoints_strokeTest(QVector<QVector<QPointF>> &points);
-    void receivedPoints_mainTest(QVector<QVector<QPointF>> &points);
-    void receivedPoints_stepTest(QVector<QVector<QPointF>> &points);
-    void receivedPoints_resolutionTest(QVector<QVector<QPointF>> &points);
-    void receivedPoints_responseTest(QVector<QVector<QPointF>> &points);
-
-    void setDAC_real(qreal value);
-    void setTimeStart();
+    void setDacReal(qreal value);
 
     void startStrokeTest();
-    void startMainTest();
-    void startOptionalTest(quint8 testNum);
-
-    void forwardGetParameters_mainTest(MainTestSettings::TestParameters &p) { emit getParameters_mainTest(p); }
-    void forwardGetParameters_responseTest(OtherTestSettings::TestParameters &p) { emit getParameters_responseTest(p); }
-    void forwardGetParameters_resolutionTest(OtherTestSettings::TestParameters &p) { emit getParameters_resolutionTest(p); }
-
+    void startMainTest(const Domain::Tests::Main::Params& params);
+    void startResponseTest(const Domain::Tests::Option::Params& params);
+    void startResolutionTest(const Domain::Tests::Option::Params& params);
+    void startStepTest(const Domain::Tests::Option::Step::Params& params);
 
     void endTest();
     void terminateTest();
@@ -261,3 +220,4 @@ public slots:
     void button_DO(quint8 DO_num, bool state);
     void checkbox_autoInit(int state);
 };
+}

@@ -2,19 +2,15 @@
 #include <QTranslator>
 #include <QDebug>
 
-#include "./Src/Ui/MainWindow/MainWindow.h"
-#include "./Src/Ui/Setup/SelectTests.h"
-#include "./Src/Ui/Setup/ObjectWindow.h"
+#include "Src/Gui/MainWindow/MainWindow.h"
+#include "Src/Gui/Setup/SelectTests.h"
+#include "Src/Gui/Setup/ObjectWindow.h"
 #include "Src/Storage/Registry.h"
-#include "./Src/Ui/Setup/ValveWindow.h"
-
+#include "Src/Gui/Setup/ValveWindow/ValveWindow.h"
 
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
-
-    qRegisterMetaType<MainTestSettings::TestParameters>("MainTestSettings::TestParameters");
-    qRegisterMetaType<TelemetryStore>("TelemetryStore");
 
     QTranslator qtTranslator;
 

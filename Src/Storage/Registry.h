@@ -1,27 +1,8 @@
 #pragma once
 
-#include <QDate>
-#include <QObject>
 #include <QSettings>
 
-struct CrossingLimits {
-
-    bool frictionEnabled = false;
-    bool linearCharacteristicEnabled = false;
-    bool rangeEnabled = false;
-    bool springEnabled = false;
-    bool dynamicErrorEnabled = false;
-
-    double frictionCoefLowerLimit = 0.0;
-    double frictionCoefUpperLimit = 0.0;
-
-    double linearCharacteristicLowerLimit = 0.0;
-
-    double rangeUpperLimit  = 0.0;
-
-    double springLowerLimit = 0.0;
-    double springUpperLimit = 0.0;
-};
+#include "Gui/Setup/ValveWindow/ValveEnums.h"
 
 struct SensorColors
 {
@@ -40,6 +21,25 @@ struct ObjectInfo
     QString FIO = "";
 };
 
+struct CrossingLimits {
+
+    bool frictionEnabled = false;
+    bool linearCharacteristicEnabled = false;
+    bool valveStrokeEnabled = false;
+    bool springEnabled = false;
+    bool dynamicErrorEnabled = false;
+
+    double frictionCoefLower = 0.0;
+    double frictionCoefUpper = 0.0;
+
+    double linearCharacteristic = 0.0;
+
+    double valveStroke = 0.0;
+
+    double springLower = 0.0;
+    double springUpper = 0.0;
+};
+
 struct MaterialsOfComponentParts {
     QString plunger;
     QString saddle;
@@ -54,38 +54,39 @@ struct MaterialsOfComponentParts {
     QString CV;
 };
 
+
 struct ValveInfo
 {
-    QString positionNumber = "";
+    QString positionNumber;
+    QString manufacturer;
+    QString valveModel;
+    QString serialNumber;
+    QString DN;
+    QString PN;
 
-    QString manufacturer = "";
-    QString valveModel = "";
-    QString serialNumber = "";
-    QString DN = "";
-    QString PN = "";
-    QString positionerModel = "";
-    QString positionerType = "";
-    QString dinamicErrorRecomend = "";
+    QString positionerModel;
+    QString dinamicErrorRecomend;
 
-    QString solenoidValveModel = "";
-    QString limitSwitchModel = "";
-    QString positionSensorModel = "";
+    QString solenoidValveModel;
+    QString limitSwitchModel;
+    QString positionSensorModel;
 
-    quint32 strokeMovement = 0;
-    QString strokValve = "";
-    QString driveModel = "";
-    quint32 safePosition = 0;
-    quint32 driveType = 0;
+    StrokeMovement strokeMovement = StrokeMovement::Linear;
+    QString valveStroke;
+    QString driveModel;
+    SafePosition safePosition = SafePosition::NormallyClosed;
+    DriveType driveType = DriveType::SpringDiaphragm;
+    PositionerType positionerType = PositionerType::Intelligent;
 
-    QString driveRecomendRange = "";
     double driveRangeLow = 0.0;
     double driveRangeHigh = 0.0;
 
-    qreal driveDiameter = 0.0;
+    double driveDiameter = 0.0;
 
-    quint32 toolNumber = 0;
-    qreal diameterPulley = 0.0;
-    QString materialStuffingBoxSeal = "";
+    ToolNumber toolNumber = ToolNumber::A;
+    double diameterPulley = 0.0;
+
+    StuffingBoxSeal materialStuffingBoxSeal = StuffingBoxSeal::PTFE;
 
     CrossingLimits crossingLimits;
 };
@@ -136,16 +137,19 @@ public:
     void saveSensorColors();
     void resetSensorColorsToDefault();
 
+    // Check
     bool checkObject(const QString &object);
     bool checkManufactory(const QString &manufactory);
     bool checkDepartment(const QString &department);
     bool checkPosition(const QString &position);
 
 private:
+    void setValue(const QString& key, const QVariant& val);
+
     QSettings m_settings;
     ObjectInfo m_objectInfo;
-    MaterialsOfComponentParts m_materialsOfComponentParts;
     ValveInfo m_valveInfo;
+    MaterialsOfComponentParts m_materialsOfComponentParts;
     SensorColors m_sensorColors;
     OtherParameters m_otherParameters;
 };

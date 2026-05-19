@@ -1,0 +1,66 @@
+#pragma once
+
+#include <QObject>
+
+enum class TestState {
+    Idle,
+    Starting,
+    Running,
+    Finished,
+    Canceled
+};
+
+namespace Domain {
+class Program;
+}
+
+namespace Domain::Tests::Main {
+struct Params;
+}
+
+namespace Domain::Tests::Option {
+struct Params;
+}
+
+namespace Domain::Tests::Option::Step {
+struct Params;
+}
+
+namespace Widgets::Chart {
+struct Point;
+}
+
+class TestController : public QObject
+{
+    Q_OBJECT
+
+public:
+    explicit TestController(QObject* parent = nullptr) : QObject(parent) { }
+
+    void setProgram(Domain::Program* program);
+
+public slots:
+    void runMainTest(const Domain::Tests::Main::Params& params);
+    void runStrokeTest();
+    void runResponseTest(const Domain::Tests::Option::Params& params);
+    void runResolutionTest(const Domain::Tests::Option::Params& params);
+    void runStepTest(const Domain::Tests::Option::Step::Params& params);
+
+    void stop();
+
+signals:
+    void stateChanged(TestState state);
+
+private slots:
+    void onProgramActuallyStarted();
+    void onProgramFinished();
+    void onProgramStartRejected(const QString& reason);
+private:
+    void run(const std::function<void()>& start);
+    void setState(TestState s);
+
+private:
+    Domain::Program* m_program = nullptr;
+    TestState m_state = TestState::Idle;
+    bool m_stopRequested = false;
+};
